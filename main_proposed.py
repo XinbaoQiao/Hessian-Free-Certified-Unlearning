@@ -368,17 +368,6 @@ if __name__ == '__main__':
         args.model, args.dataset, args.num_forget, args.epochs, args.lr,args.lr_decay,args.clip,args.seed))
     
 
-    ### Forgetting data 
-    forget_acc, forget_loss = test_img(net, forget_dataset, args)
-    # acc of forgetting data
-    rootpath = './log/Proposed/accforget/'
-    if not os.path.exists(rootpath):
-        os.makedirs(rootpath)  
-    accfile = open(rootpath + 'Proposed_accfile_model_{}_data_{}_remove_{}_epoch_{}_lr_{}_lrdecay_{}_clip_{}_seed{}.dat'.format(
-    args.model,args.dataset, args.num_forget,args.epochs,args.lr,args.lr_decay,args.clip,args.seed), 'w')
-    accfile.write(str(forget_acc))
-    accfile.close()
-
     ###  Remaining data 
     remain_acc_list, remain_loss_list = test_img(net, remain_dataset , args)
     # acc of remain data
