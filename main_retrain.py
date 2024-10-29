@@ -273,25 +273,6 @@ if __name__ == '__main__':
         args.model,args.dataset, args.num_forget,args.epochs,args.lr,args.lr_decay,args.clip,args.seed))
 
 
-    ##### Compute loss/acc
-    # loss
-    forget_acc_list, forget_loss_list = test_img(net, forget_dataset, args)
-    rootpath = './log/Retrain/lossforget/'
-    if not os.path.exists(rootpath):
-        os.makedirs(rootpath)  
-    lossfile = open(rootpath + 'Retrain_lossfile_model_{}_data_{}_remove_{}_epoch_{}_lr_{}_lrdecay_{}_clip_{}_seed{}.dat'.format(
-    args.model,args.dataset, args.num_forget,args.epochs,args.lr,args.lr_decay,args.clip,args.seed), 'w')
-    lossfile.write(str(forget_loss_list))
-    lossfile.close()
-    # acc 
-    rootpath = './log/Retrain/accforget/'
-    if not os.path.exists(rootpath):
-        os.makedirs(rootpath)  
-    accfile = open(rootpath + 'Retrain_accfile_model_{}_data_{}_remove_{}_epoch_{}_lr_{}_lrdecay_{}_clip_{}_seed{}.dat'.format(
-   args.model,args.dataset, args.num_forget,args.epochs,args.lr,args.lr_decay,args.clip,args.seed), 'w')
-    accfile.write(str(forget_acc_list))
-    accfile.close()
-
     ##### Compute loss/acc on remaining datase
     # loss of remaining data
     remain_acc_list, remain_loss_list = test_img(net, remain_dataset , args)
