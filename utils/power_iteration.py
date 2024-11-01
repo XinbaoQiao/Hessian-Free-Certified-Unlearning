@@ -22,8 +22,7 @@ def spectral_radius(args,loss_batch, net):
 
     params = list(net.parameters())
     adjusted_params = [param - args.lr * grad_param for param, grad_param in zip(params, grad_params)]
-    # adjusted_params = [-args.lr * (args.lr_decay**t) * grad_param for grad_param in  grad_params]
-    # adjusted_params = [args.lr * (args.lr_decay**t) * grad_param for grad_param in  grad_params]
+
 
 
     e_value = 0
