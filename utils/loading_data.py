@@ -130,8 +130,54 @@ def data_processing_lfw():
             else:
                 shutil.rmtree(subfolder_path)
 
+def data_preprocessing_adult(in_path, out_path):
+    df = pd.read_csv(in_path)
 
+    df.drop(['fnlwgt', 'educationNum'], axis=1, inplace=True) 
+    # print(df.columns)
+    df.drop_duplicates(inplace=True)
+
+    df.dropna(inplace=True) 
+    # print(df.shape[0])
+
+    new_columns = ['workclass', 'maritalStatus', 'occupation', 'relationship', 'race', 'sex', 'nativeCountry', 'income']
+    for col in new_columns:
+        df = df[~df[col].str.contains(r'\?', regex=True)]
+    print(df.shape[0])
+    print(df.head)
+
+    continuous_column = ['age', 'capitalGain',  'capitalLoss', 'hoursPerWeek']
+    age_bins = [0, 23, 28, 33, 38, 43, 53, 63, 100]
+    df['age'] = pd.cut(df['age'], age_bins, labels=False)
+    capGain_bins = [-1, 100, 1000, 5000, 10000, 30000, 50000, 100000, 150000]
+    df['capitalGain'] = pd.cut(df['capitalGain'], capGain_bins, labels=False)
+    capLossbins = [-1, 1, 1500, 2000, 4000, 6000, 10000]
+    df['capitalLoss'] = pd.cut(df['capitalLoss'], capLossbins, labels=False)
+    hourbins = [0, 10, 20, 30, 35, 40, 45, 50, 60, 70, 80, 100]
+    df['hoursPerWeek'] = pd.cut(df['hoursPerWeek'], hourbins, labels=False)
+
+    # categorical_columns = ['workclass', 'education', 'maritalStatus', 'occupation', 'relationship', 'race', 'sex', 'nativeCountry']
+    categorical_columns = ['workclass', 'education', 'maritalStatus', 'occupation', 'nativeCountry']
+    df = pd.get_dummies(df, columns=categorical_columns)
+
+    income_mapping = {' <=50K': 0, ' <=50K.': 0,' >50K': 1,' >50K.': 1}
+    df['income'] = df['income'].map(income_mapping)
+
+    columns_to_drop = ['relationship', 'race', 'sex']  
+    df.drop(columns=columns_to_drop, inplace=True)
+
+    df.to_csv(out_path, index=False)
 
 if __name__ == '__main__':
-    data_processing_celeba()
+    # data_processing_celeba()
     # data_processing_lfw()
+
+    columns = ['age', 'workclass', 'fnlwgt', 'education', 'educationNum', 'maritalStatus', 'occupation', 'relationship', 'race', 'sex',
+        'capitalGain', 'capitalLoss', 'hoursPerWeek', 'nativeCountry', 'income']
+    df_train_set = pd.read_csv('./data/adult/adult_train.txt', names=columns)
+    df_test_set = pd.read_csv('./data/adult/adult_test.txt', names=columns, skiprows=1)
+
+    df_train_set.to_csv('./data/adult/train_adult.csv', index=False)
+    df_test_set.to_csv('./data/adult/test_adult.csv', index=False)
+    data_preprocessing_adult('./data/adult/train_adult.csv','./data/adult/train_adult_processed.csv')
+    data_preprocessing_adult('./data/adult/test_adult.csv','./data/adult/test_adult_processed.csv')

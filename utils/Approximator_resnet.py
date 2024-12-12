@@ -122,7 +122,7 @@ def getapproximator_resnet(args,img_size,Dataset2recollect,indices_to_unlearn):
                 scaling_factor = args.clip / grad_norm
                 grad_params = [grad * scaling_factor for grad in grad_params]
             if not computed_rho:
-                rho = spectral_radius(args, loss_batch=loss_batch, net=net)
+                rho = spectral_radius(args, loss_batch=loss_batch, net=net,t=len(info)*iter+b)
                 computed_rho = True     
             t_start = time.time()   
             for i in indices_to_unlearn: 

@@ -21,7 +21,7 @@ from utils.subset import reduce_dataset_size
 from utils.perturbation import NoisedNetReturn
 import utils.loading_data as dataset
 from models.Update import  train
-from models.Nets import MLP, CNNMnist, CNNCifar,Logistic,LeNet,FashionCNN4
+from models.Nets import MLP, CNNMnist, CNNCifar,Logistic,LeNet
 import torch.nn as nn
 # resnet18
 from torch.utils.data import Subset
@@ -136,7 +136,7 @@ if __name__ == '__main__':
         dataset_train = dataset.LFWDataSet(train_X, train_Y)
         dataset_test= dataset.LFWDataSet(test_X, test_Y)
         args.num_dataset = len(dataset_train)
-        
+
     else:
         exit('Error: unrecognized dataset')
 
@@ -151,10 +151,8 @@ if __name__ == '__main__':
     # build model
     if args.model == 'cnn' and args.dataset == 'cifar':
         net = CNNCifar(args=args).to(args.device)
-    elif args.model == 'cnn' and (args.dataset == 'mnist' or args.dataset == 'fashion-mnist'):
+    elif args.model == 'cnn' and args.dataset != 'cifar':
         net = CNNMnist(args=args).to(args.device)
-    elif args.model == 'cnn4' and (args.dataset == 'mnist' or args.dataset == 'fashion-mnist'):
-        net = FashionCNN4().to(args.device)
     elif args.model == 'lenet' and args.dataset == 'fashion-mnist':
         net = LeNet().to(args.device)
     elif args.model == 'resnet18' and args.dataset == 'celeba':

@@ -310,10 +310,8 @@ if __name__ == '__main__':
     # build model
     if args.model == 'cnn' and args.dataset == 'cifar':
         net = CNNCifar(args=args).to(args.device)
-    elif args.model == 'cnn' and (args.dataset == 'mnist' or args.dataset == 'fashion-mnist'):
+    elif args.model == 'cnn' and args.dataset != 'cifar':
         net = CNNMnist(args=args).to(args.device)
-    elif args.model == 'cnn4' and (args.dataset == 'mnist' or args.dataset == 'fashion-mnist'):
-        net = FashionCNN4().to(args.device)
     elif args.model == 'lenet' and args.dataset == 'fashion-mnist':
         net = LeNet().to(args.device)
     elif args.model == 'resnet18' and args.dataset == 'celeba':
@@ -366,18 +364,16 @@ if __name__ == '__main__':
     rootpath = './log'
     Original_model_path = rootpath + '/Original/Model/Original_model_{}_data_{}_epoch_{}_lr_{}_lrdecay_{}_clip_{}_seed{}.pth'.format(args.model,args.dataset,args.epochs,args.lr,args.lr_decay,args.clip,args.seed)
     Proposed_model_path = rootpath + '/Proposed/Model/Proposed_model_{}_data_{}_remove_{}_epoch_{}_lr_{}_lrdecay_{}_clip_{}_seed{}.pth'.format(args.model, args.dataset, args.num_forget, args.epochs, args.lr,args.lr_decay,args.clip,args.seed)
-    IJ_model_path = rootpath + '/IJ/Model/IJ_model_{}_data_{}_remove_{}_epoch_{}_seed{}.pth'.format(args.model,args.dataset, args.num_forget,args.epochs,args.seed)
-    NU_model_path = rootpath + '/NU/Model/NU_model_{}_data_{}_remove_{}_epoch_{}_seed{}.pth'.format(args.model,args.dataset, args.num_forget,args.epochs,args.seed)
+    # IJ_model_path = rootpath + '/IJ/Model/IJ_model_{}_data_{}_remove_{}_epoch_{}_seed{}.pth'.format(args.model,args.dataset, args.num_forget,args.epochs,args.seed)
+    # NU_model_path = rootpath + '/NU/Model/NU_model_{}_data_{}_remove_{}_epoch_{}_seed{}.pth'.format(args.model,args.dataset, args.num_forget,args.epochs,args.seed)
     Retrain_model_path = rootpath + '/Retrain/Model/Retrain_model_{}_data_{}_remove_{}_epoch_{}_lr_{}_lrdecay_{}_clip_{}_seed{}.pth'.format(args.model,args.dataset, args.num_forget,args.epochs,args.lr,args.lr_decay,args.clip,args.seed)
 
     net_learned.load_state_dict(torch.load(Original_model_path))
     net_target_Retrain.load_state_dict(torch.load(Retrain_model_path))
-    net_target_IJ.load_state_dict(torch.load(IJ_model_path))
-    net_target_NU.load_state_dict(torch.load(NU_model_path))
+    # net_target_IJ.load_state_dict(torch.load(IJ_model_path))
+    # net_target_NU.load_state_dict(torch.load(NU_model_path))
     net_target_Proposed.load_state_dict(torch.load(Proposed_model_path))
     if args.application ==True:  
-        args.std = 0.0025  ## ε_LR ≈ 2
-        # args.std = 0.0265   ## ε_CNN ≈ 120
         w = NoisedNetReturn(args, net=copy.deepcopy(net_target_Proposed).to(args.device), rho=1, epsilon=args.epsilon, delta=args.delta, n=args.num_dataset, m=1)
         net_target_Proposed.load_state_dict(w)
 
@@ -392,8 +388,8 @@ if __name__ == '__main__':
 
     fpr_Retrain, tpr_Retrain, train_auc_Retrain,acc_Retrain, low_Retrain = attack(args,net_target_Retrain,net_learned,unl_loader,res_loader, dataset_test,unlearn_method='Retrain')
     fpr_Proposed, tpr_Proposed, train_auc_Proposed,acc_Proposed,low_Proposed = attack(args,net_target_Proposed,net_learned,unl_loader,res_loader, dataset_test,unlearn_method='Proposed (ε=∞)')
-    fpr_IJ, tpr_IJ, train_auc_IJ,acc_IJ, low_IJ = attack(args,net_target_IJ,net_learned,unl_loader,res_loader, dataset_test,unlearn_method='IJ')
-    fpr_NU, tpr_NU, train_auc_NU,acc_NU, low_NU= attack(args,net_target_NU,net_learned,unl_loader,res_loader, dataset_test,unlearn_method='NS')
+    # fpr_IJ, tpr_IJ, train_auc_IJ,acc_IJ, low_IJ = attack(args,net_target_IJ,net_learned,unl_loader,res_loader, dataset_test,unlearn_method='IJ')
+    # fpr_NU, tpr_NU, train_auc_NU,acc_NU, low_NU= attack(args,net_target_NU,net_learned,unl_loader,res_loader, dataset_test,unlearn_method='NS')
 
 
     rootpath = './results/MIAU/'
@@ -403,8 +399,8 @@ if __name__ == '__main__':
     )
     file_path = os.path.join(rootpath, filename)
     with open(file_path, 'w') as file:
-        file.write(f"IJ - AUC: {100 * train_auc_IJ:.2f}%, Accuracy: { acc_IJ:.2f}%\n")
-        file.write(f"NS - AUC: {100 * train_auc_NU:.2f}%, Accuracy: {acc_NU:.2f}%\n")
+        # file.write(f"IJ - AUC: {100 * train_auc_IJ:.2f}%, Accuracy: { acc_IJ:.2f}%\n")
+        # file.write(f"NS - AUC: {100 * train_auc_NU:.2f}%, Accuracy: {acc_NU:.2f}%\n")
         file.write(f"Retrain - AUC: {100 * train_auc_Retrain:.2f}%, Accuracy: { acc_Retrain:.2f}%\n")
         file.write(f"Proposed (ε=∞) - AUC: {100 * train_auc_Proposed:.2f}%, Accuracy: {acc_Proposed:.2f}%\n")
 
@@ -413,8 +409,8 @@ if __name__ == '__main__':
     color_Retrain = "#F7A1A1" ; color_Proposed = "#D22027" ; color_IJ = "#385989" ;color_NU = "#7FA5B7" ; color_diagonal = "#BEBEBE" 
     plt.figure()
     plt.figure(figsize=(8.5,  7)); plt.subplots_adjust(left=0.175, right=0.925, top=0.925, bottom=0.125)
-    plt.plot(fpr_IJ, tpr_IJ, color=color_IJ, lw=2, label=f'IJ (AUC = {train_auc_IJ:.2f})')
-    plt.plot(fpr_NU, tpr_NU, color=color_NU, lw=2, label=f'NS (AUC = {train_auc_NU:.2f})')
+    # plt.plot(fpr_IJ, tpr_IJ, color=color_IJ, lw=2, label=f'IJ (AUC = {train_auc_IJ:.2f})')
+    # plt.plot(fpr_NU, tpr_NU, color=color_NU, lw=2, label=f'NS (AUC = {train_auc_NU:.2f})')
     plt.plot(fpr_Retrain, tpr_Retrain, color=color_Retrain, lw=2, label=f'Retrain (AUC = {train_auc_Retrain:.2f})')
     plt.plot(fpr_Proposed, tpr_Proposed, color=color_Proposed, lw=2, label=f'Proposed  (AUC = {train_auc_Proposed:.2f})')
     plt.plot([0, 1], [0, 1], color=color_diagonal, lw=2, linestyle='--')

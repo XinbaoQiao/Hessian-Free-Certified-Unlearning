@@ -3,6 +3,8 @@ from torch.autograd.functional import hessian
 import torch.nn as nn
 from torch.autograd import grad, Variable
 import matplotlib
+import random
+import numpy as np
 matplotlib.use('Agg')
 from torch import nn
 import torch
@@ -29,6 +31,11 @@ class DatasetSplit(Dataset):
 
 
 def compute_hessian(args, model, Dataset2recollect, all_indices):
+    random.seed(args.seed)
+    np.random.seed(args.seed)
+    torch.manual_seed(args.seed)
+    torch.cuda.manual_seed_all(args.seed)
+    torch.cuda.manual_seed(args.seed)
     model.train()
     loss_func = nn.CrossEntropyLoss()
     image_0, label_0, index_0 = Dataset2recollect[all_indices[0]]

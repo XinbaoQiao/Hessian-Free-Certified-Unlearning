@@ -4,73 +4,38 @@ import random
 import numpy as np
 import joblib
 from utils.options import args_parser
-from models.Nets import MLP, CNNMnist, CNNCifar,Logistic,LeNet,FashionCNN4
-import torch.nn as nn
+from models.load_datasets import load_dataset
+from models.load_models import load_model
 from torchvision.models import resnet18
 import joblib
 import os
-import copy
 from utils.power_iteration import spectral_radius
 
 args = args_parser()
 
 
 def getapproximator(args,img_size,Dataset2recollect):
-
+###############################################################################
+#                               SETUP                                         #
+###############################################################################
+    # parse args
+    args = args_parser()
     random.seed(args.seed)
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
     torch.cuda.manual_seed_all(args.seed)
     torch.cuda.manual_seed(args.seed)
-    net = None
-    # build model
-    if args.model == 'cnn' and args.dataset == 'cifar':
-        net = CNNCifar(args=args).to(args.device)
-    elif args.model == 'cnn' and (args.dataset == 'mnist' or args.dataset == 'fashion-mnist'):
-        net = CNNMnist(args=args).to(args.device)
-    elif args.model == 'cnn4' and (args.dataset == 'mnist' or args.dataset == 'fashion-mnist'):
-        net = FashionCNN4().to(args.device)
-    elif args.model == 'lenet' and args.dataset == 'fashion-mnist':
-        net = LeNet().to(args.device)
-    elif args.model == 'resnet18' and args.dataset == 'celeba':
-        net = resnet18(pretrained=True).to(args.device)
-        fc_features = net.fc.in_features
-        net.fc = nn.Linear(fc_features,2)
-    elif args.model == 'resnet18' and args.dataset == 'cifar':
-        net = resnet18(pretrained=True).to(args.device)
-        fc_features = net.fc.in_features
-        net.fc = nn.Linear(fc_features,10)
-    elif args.model == 'resnet18' and args.dataset == 'svhn':
-        net = resnet18(pretrained=True).to(args.device)
-        fc_features = net.fc.in_features
-        net.fc = nn.Linear(fc_features,10)
-    elif args.model == 'resnet18' and args.dataset == 'lfw':
-        net = resnet18(pretrained=True).to(args.device)
-        # for param in net.parameters():
-        #     param.requires_grad = False
-        fc_inputs = net.fc.in_features
-        net.fc = nn.Sequential(
-            nn.Linear(fc_inputs, 256),
-            nn.ReLU(),
-            nn.Dropout(),
-            nn.Linear(256, 29))
-    elif args.model == 'mlp':
-        len_in = 1
-        for x in img_size:
-            len_in *= x
-        net = MLP(dim_in=len_in, dim_hidden=64, dim_out=args.num_classes).to(args.device)
-    elif args.model == 'logistic':
-        len_in = 1
-        for x in img_size:
-            len_in *= x
-        net = Logistic(dim_in=len_in,  dim_out=args.num_classes).to(args.device)
-    else:
-        exit('Error: unrecognized model')
 
+    path="./data"
+    if not os.path.exists(path):
+        os.makedirs(path)
+    args.device = torch.device('cuda:{}'.format(args.gpu) if torch.cuda.is_available() and args.gpu != -1 else 'cpu')
 
-    net = net.to(args.device)
+    dataset_train, dataset_test, args.num_classes = load_dataset()
+    img_size = dataset_train[0][0].shape
+    print(args.num_classes)
+    net = load_model(img_size).to(args.device)
     net.eval()    
-    # print(net)
 
     # load file
     path1 = "./Checkpoint/model_{}_checkpoints". format(args.model)
@@ -84,6 +49,9 @@ def getapproximator(args,img_size,Dataset2recollect):
     lr=args.lr
     loss_func = torch.nn.CrossEntropyLoss()
 
+###############################################################################
+#                               Unlearning                                    #
+###############################################################################
     # approximator
     approximator = {i: [torch.zeros_like(param) for param in net.parameters()] for i in range(len(dataset))}
     for step in range(len(info)):
@@ -123,7 +91,7 @@ def getapproximator(args,img_size,Dataset2recollect):
             scaling_factor = args.clip / grad_norm
             grad_params = [grad * scaling_factor for grad in grad_params]
         if not computed_rho:
-            rho = spectral_radius(args, loss_batch=loss_batch, net=net)
+            rho = spectral_radius(args, loss_batch=loss_batch, net=net,t=step)
             computed_rho = True  
         torch.cuda.synchronize()
         t_start = time.time()

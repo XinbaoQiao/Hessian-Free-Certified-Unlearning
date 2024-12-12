@@ -1,4 +1,6 @@
-This repository is the supplementary code of the paper "**Efficient and Generalizable Second-Order Certified Unlearning: A Hessian-Free Online Model Updates Approach**".
+# Introduction
+
+This temporary repository is the supplementary code of the paper "**Efficient and Generalizable Second-Order Unlearning: A Hessian-Free Online Model Updates Approach**".
 
 ![comparison](comparison.png "Exisiting Second-Order Certified Unlearning Schemes")
 **Existing Second-Order Certified Unlearning Schemes:** <br>
@@ -12,12 +14,12 @@ We first obtain the learned model and the unlearned models, which can be done us
 **Proposed Hessian-Free method**:
 
         python3 -u main_proposed.py --model logistic --dataset mnist --epochs 15  --num_dataset 1000 --batch_size 32 --num_forget 50 --lr 0.05  --regularization 0.5 --lr_decay 0.995 --clip 5 --gpu 0  --seed 124
-        
+
 **Retraining method**:
 
         python3 -u main_retrain.py --model logistic --dataset mnist --epochs 15  --num_dataset 1000 --batch_size 32 --num_forget 50 --lr 0.05  --regularization 0.5 --lr_decay 0.995 --clip 5 --gpu 0  --seed 124
 
-We commented out the evaluation of NS and IJ in utils/Evaluate_Euclidean.py, so you can skip NS and IJ and directly evaluate our proposed method (as computing the Hessian matrix takes a considerable amount of time). If you want to evaluate NS and IJ, please uncomment the code and execute the following commands:
+We commented out the evaluation of NS and IJ in utils/Evaluate_Euclidean.py, so you can skip NS and IJ and directly evaluate our proposed method (as computing the Hessian takes a considerable amount of time). If you want to evaluate NS and IJ, please uncomment the code and execute the following commands:
 
 **Newton Step method (Unofficial implementation)**:
 
@@ -48,11 +50,11 @@ All results are included in ./results.
 # Experiments Codebase
 This section contains the bash scripts to run all the experiments for the paper.
 
-    bash MNIST.sh
-    bash FMNIST.sh
-    bash Cifar.sh
-    bash CelebA.sh
-    bash LFW.sh
-    bash MIAL.sh
-    bash MIAU.sh
-    bash Ablation.sh
+    bash ./codebase/MNIST.sh
+    bash ./codebase/FMNIST.sh
+    bash ./codebase/Cifar.sh
+    bash ./codebase/CelebA.sh
+    bash ./codebase/LFW.sh
+    bash ./codebase/MIAL.sh
+    bash ./codebase/MIAU.sh
+    bash ./codebase/Ablation.sh

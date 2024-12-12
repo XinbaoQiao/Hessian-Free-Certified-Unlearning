@@ -13,8 +13,9 @@ class Logistic(nn.Module):
         super(Logistic, self).__init__()
         self.layer = nn.Linear(dim_in, dim_out)
     def forward(self, x):
-        x = x.view(-1, x.shape[1]*x.shape[-2]*x.shape[-1])
-        x = self.layer(x)
+        if len(x.shape) > 2: 
+            x = x.view(-1, x.shape[1]*x.shape[-2]*x.shape[-1]) 
+        x = self.layer(x) 
         return x
 
 
@@ -25,15 +26,16 @@ class MLP(nn.Module):
         self.relu = nn.ReLU()
         self.dropout = nn.Dropout()
         self.layer_hidden = nn.Linear(dim_hidden, dim_out)
-        self.softmax = nn.Softmax(dim=1)
+        # self.softmax = nn.Softmax(dim=1)
 
     def forward(self, x):
-        x = x.view(-1, x.shape[1]*x.shape[-2]*x.shape[-1])
+        if len(x.shape) > 2: 
+            x = x.view(-1, x.shape[1]*x.shape[-2]*x.shape[-1])
         x = self.layer_input(x)
         x = self.dropout(x)
         x = self.relu(x)
         x = self.layer_hidden(x)
-        return self.softmax(x)
+        return x
 
 
 class CNNMnist(nn.Module):

@@ -8,6 +8,8 @@ from torch import nn, autograd
 import torch
 import time
 import os
+import random
+import numpy as np
 from utils.options import args_parser
 from torch.utils.data import DataLoader, Dataset
 
@@ -31,6 +33,11 @@ class DatasetSplit(Dataset):
 
 
 def compute_hessian(args, model, Dataset2recollect, indices):
+    random.seed(args.seed)
+    np.random.seed(args.seed)
+    torch.manual_seed(args.seed)
+    torch.cuda.manual_seed_all(args.seed)
+    torch.cuda.manual_seed(args.seed)
     model.train()
     loss_func = nn.CrossEntropyLoss()
     step = 0 

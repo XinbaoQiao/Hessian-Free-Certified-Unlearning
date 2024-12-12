@@ -6,8 +6,6 @@ import torch
 from torch import nn, autograd
 import numpy as np
 from torch.utils.data import DataLoader, Dataset
-import time
-import copy
 import random
 import matplotlib
 matplotlib.use('Agg')
@@ -59,7 +57,7 @@ def train(step,args, net, dataset,learning_rate,indices_to_unlearn=[]):
         log_probs = net(images)
         loss = loss_func(log_probs, labels)
         for param in net.parameters():
-                            loss += 0.5 * args.regularization * (param * param).sum()
+                    loss += 0.5 * args.regularization * (param * param).sum()
         net.train()
         loss.backward()
         torch.nn.utils.clip_grad_norm_(parameters=net.parameters(), max_norm=args.clip, norm_type=2)
@@ -70,9 +68,6 @@ def train(step,args, net, dataset,learning_rate,indices_to_unlearn=[]):
 
         print("     Step {:3d}     Batch {:3d}, Batch Size: {:3d}, Trainning Loss: {:.2f}".format(step,batch_idx,dataloader.batch_size,loss))
         step +=1
-        
-
-
         
     return net.state_dict(), loss, lr,step
 

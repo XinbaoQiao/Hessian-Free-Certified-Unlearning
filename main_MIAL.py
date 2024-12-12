@@ -529,10 +529,8 @@ if __name__ == '__main__':
     # build model
     if args.model == 'cnn' and args.dataset == 'cifar':
         net = CNNCifar(args=args).to(args.device)
-    elif args.model == 'cnn' and (args.dataset == 'mnist' or args.dataset == 'fashion-mnist'):
+    elif args.model == 'cnn' and args.dataset != 'cifar':
         net = CNNMnist(args=args).to(args.device)
-    elif args.model == 'cnn4' and (args.dataset == 'mnist' or args.dataset == 'fashion-mnist'):
-        net = FashionCNN4().to(args.device)
     elif args.model == 'lenet' and args.dataset == 'fashion-mnist':
         net = LeNet().to(args.device)
     elif args.model == 'resnet18' and args.dataset == 'celeba':
@@ -637,8 +635,6 @@ if __name__ == '__main__':
     Proposed_model_state_dict = torch.load(Proposed_model_path)
     net_target_Proposed.load_state_dict(Proposed_model_state_dict)
     if args.application ==True:  
-        args.std = 0.0025  ## ε_LR ≈ 2
-        # args.std = 0.0265   ## ε_CNN ≈ 120
         w = NoisedNetReturn(args, net=copy.deepcopy(net).to(args.device), rho=1, epsilon=args.epsilon, delta=args.delta, n=args.num_dataset, m=1)
         net_target_Proposed.load_state_dict(w)
     query(args,net_target_Proposed,Proposed_logitspath,train_shadow,train_dl)
