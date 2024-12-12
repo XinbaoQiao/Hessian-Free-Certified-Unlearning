@@ -55,6 +55,10 @@ This section contains the bash scripts to run all the experiments for the paper.
     bash ./codebase/Cifar.sh
     bash ./codebase/CelebA.sh
     bash ./codebase/LFW.sh
+    bash ./codebase/Wine.sh
+    bash ./codebase/HAPT.sh
+    bash ./codebase/Adult.sh
+    bash ./codebase/Obesity.sh
     bash ./codebase/MIAL.sh
     bash ./codebase/MIAU.sh
     bash ./codebase/Ablation.sh
