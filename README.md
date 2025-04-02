@@ -48,7 +48,7 @@ Finally, we conduct the MIA (Membership Inference Attack) evaluation:
 All results are included in ./results.
 
 # Experiments Codebase
-This section contains the bash scripts to run all the experiments for the paper.
+This section contains the bash scripts to run all the experiments of the paper.
 
     bash ./codebase/MNIST.sh
     bash ./codebase/FMNIST.sh
