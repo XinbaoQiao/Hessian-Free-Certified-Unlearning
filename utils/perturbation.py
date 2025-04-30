@@ -80,7 +80,7 @@ def NoisedNetReturn(args, net, rho, epsilon, delta, n=1000, m=1):
     # b =  2* args.lr * args.clip * (rho**T- args.lr_decay**(2*T))
 
     if args.std == 0:
-        sigma= calibrateAnalyticGaussianMechanism(epsilon, delta , GS=b, tol = 1.e-12)   
+        sigma= calibrateAnalyticGaussianMechanism(epsilon, delta , GS=b, tol = 1e-5)   
     else:
         sigma = args.std
 
