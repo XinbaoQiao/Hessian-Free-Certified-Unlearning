@@ -12,7 +12,7 @@ def spectral_radius(args,loss_batch, net,t):
     torch.cuda.manual_seed(args.seed)
     grad_params = torch.autograd.grad(loss_batch, net.parameters(), create_graph=True, retain_graph=True)
     grad_norm = torch.norm(torch.cat([grad.view(-1) for grad in grad_params]))
-    # print('Grad Norm:',grad_norm)
+
     if grad_norm > args.clip:
         scaling_factor = args.clip / grad_norm
         grad_params = [grad * scaling_factor for grad in grad_params]
