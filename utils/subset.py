@@ -18,7 +18,6 @@ def sample_dataset_size(dataset, random_seed,indices_to_unlearn):
     reduced_dataset = Subset(dataset, indices_to_unlearn)
     return reduced_dataset
 
-
 def get_non_overlapping_subsets(dataset, subdataset_train, num_new_data, random_seed):
     subdataset_train_indices = set(subdataset_train.indices)  
     all_indices = set(range(len(dataset)))
