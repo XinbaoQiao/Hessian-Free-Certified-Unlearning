@@ -1,5 +1,7 @@
 # Introduction
 
+**Note** ((Updated: January 21, 2026)): We are in the process of optimizing the codebase. To ensure theoretical accuracy, current functionality is limited to processing individual samples. We intend to publish parallelized and approximate implementations later this year.
+
 This temporary repository is the supplementary code of the paper "**Hessian-Free Online Certified Unlearning**".
 
 ![comparison](comparison.png "Exisiting Second-Order Certified Unlearning Schemes")
